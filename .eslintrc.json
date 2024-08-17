@@ -1,3 +1,12 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["eslint:recommended", "next/core-web-vitals"],
+  "rules": {
+    "semi": "warn",
+    "react/prop-types": "error",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "jsx-quotes": ["error", "prefer-double"],
+    "no-unused-vars": 1,
+    "no-param-reassign": ["error", { "props": false }],
+    "react/no-array-index-key": 2
+  }
 }
