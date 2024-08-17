@@ -35,11 +35,12 @@ export function NumberRanker({
           !gameState.rankedLastNumber &&
           gameState.currentNumber;
         return (
-          <NumberLine>
+          <NumberLine
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+          >
             <p>{i + 1}</p>
             <NumberDiv
-              // eslint-disable-next-line react/no-array-index-key
-              key={i}
               onClick={isValid ? () => rankNumber(i) : undefined}
               className={isValid ? "valid" : "invalid"}
             >
