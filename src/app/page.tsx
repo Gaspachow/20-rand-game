@@ -27,8 +27,8 @@ const Main = styled.div`
   gap: 10px;
   flex-wrap: wrap-reverse;
   align-items: center;
-  padding: 6rem;
   min-height: 100vh;
+  font-family: 'MS Sans Serif';
 `;
 
 const GameDiv = styled.div`

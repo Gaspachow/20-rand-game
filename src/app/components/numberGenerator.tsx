@@ -32,8 +32,11 @@ export function NumberGenerator({
           : "NEXT"}
       </NewNumberButton>
       <Separator />
-      <p>Score: {gameState.score}</p>
-      <button onClick={() => updateGameState(defaultGameState)}>NEW RUN</button>
+      <Title>20 Random Ranker V0.01</Title>
+      <Title style={{ color: 'lightgreen' }}>Score: {gameState.score}</Title>
+      <NewRunButton onClick={() => updateGameState(defaultGameState)}>
+        NEW RUN
+      </NewRunButton>
     </NumberGenDiv>
   );
 }
@@ -56,6 +59,7 @@ const NumberGenDiv = styled.div`
 const NewNumberButton = styled.button`
   cursor: pointer;
   font-size: 30px;
+  font-family: "MS Sans Serif";
 
   padding: 5px;
   border-radius: 0px;
@@ -69,6 +73,15 @@ const NewNumberButton = styled.button`
   &.isLoss {
     background: darkred;
   }
+`;
+
+const NewRunButton = styled.button`
+  font-family: "MS Sans Serif";
+  cursor: pointer;
+`;
+
+const Title = styled.h2`
+  font-family: "MS Sans Serif";
 `;
 
 const Separator = styled.hr`
