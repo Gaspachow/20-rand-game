@@ -2,6 +2,8 @@
 import React from "react";
 import useLocalStorage from "./useLocalStorage";
 
+const version = 0.01;
+
 export interface GameState {
   rankedNumbers: number[];
   currentNumber: number | undefined;
@@ -14,6 +16,7 @@ export interface GameState {
     fiftyfifty: boolean;
     friend: boolean;
   };
+  version: number;
 }
 
 export const defaultGameState: GameState = {
@@ -28,6 +31,7 @@ export const defaultGameState: GameState = {
     fiftyfifty: true,
     friend: true,
   },
+  version,
 };
 
 export function useGameState(): [
@@ -43,10 +47,6 @@ export function useGameState(): [
   const [gameStateObject, setGameStateObject] =
     React.useState(defaultGameState);
 
-  React.useEffect(() => {
-    setGameStateObject(JSON.parse(gameStateString));
-  }, [gameStateString]);
-
   const updateGameState = React.useCallback(
     (gameState: GameState) => {
       const stringVersion = JSON.stringify(gameState);
@@ -55,6 +55,16 @@ export function useGameState(): [
     },
     [setGameStateString]
   );
+
+  React.useEffect(() => {
+    try {
+      const gameState = JSON.parse(gameStateString);
+      if (gameState?.version === version) setGameStateObject(gameState);
+      else updateGameState(defaultGameState);
+    } catch (e: any) {
+      updateGameState(defaultGameState);
+    }
+  }, [gameStateString, updateGameState]);
 
   const generateNewNumber = React.useCallback(
     (forcedNum?: number) => {
