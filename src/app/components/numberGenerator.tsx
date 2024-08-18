@@ -58,11 +58,14 @@ export function NumberGenerator({
       <Separator />
       <p>Lifelines:</p>
       <LifeLinesDiv>
-        <NewRunButton onClick={x2Lifeline} disabled={!gameState.lifelines.x2}>
+        <NewRunButton
+          onClick={gameState.rankedLastNumber ? undefined : x2Lifeline}
+          disabled={!gameState.lifelines.x2}
+        >
           X2
         </NewRunButton>
         <NewRunButton
-          onClick={fiftyFiftyLifeline}
+          onClick={gameState.rankedLastNumber ? undefined : fiftyFiftyLifeline}
           disabled={!gameState.lifelines.fiftyfifty}
         >
           50/50
