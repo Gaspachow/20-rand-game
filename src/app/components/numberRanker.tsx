@@ -1,7 +1,6 @@
 import { GameState } from "@/hooks/useGameState";
 import styled from "@emotion/styled";
 import React from "react";
-import { start } from "repl";
 
 interface NumberRankerProps {
   gameState: GameState;

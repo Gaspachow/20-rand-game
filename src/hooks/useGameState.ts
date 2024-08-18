@@ -9,6 +9,11 @@ export interface GameState {
   rankedLastNumber: boolean;
   startValidIndex: number;
   endValidIndex: number;
+  lifelines: {
+    x2: boolean;
+    fiftyfifty: boolean;
+    friend: boolean;
+  };
 }
 
 export const defaultGameState: GameState = {
@@ -18,6 +23,11 @@ export const defaultGameState: GameState = {
   rankedLastNumber: false,
   startValidIndex: 0,
   endValidIndex: 0,
+  lifelines: {
+    x2: true,
+    fiftyfifty: true,
+    friend: true,
+  },
 };
 
 export function useGameState(): [
@@ -46,20 +56,38 @@ export function useGameState(): [
     [setGameStateString]
   );
 
-  const generateNewNumber = React.useCallback(() => {
-    // Generate random number between 1 and 1000 included
-    const randNum = Math.floor(Math.random() * 1000) + 1;
-    const newGameState = {
-      ...gameStateObject,
-      currentNumber: randNum,
-      rankedLastNumber: false,
-    };
-    const [startValidIndex, endValidIndex] = getValidIndexes(newGameState);
-    newGameState.startValidIndex = startValidIndex;
-    newGameState.endValidIndex = endValidIndex;
-    updateGameState(newGameState);
-    return;
-  }, [gameStateObject, updateGameState]);
+  const generateNewNumber = React.useCallback(
+    (forcedNum?: number) => {
+      // Generate random number between 1 and 1000 included
+      let newGameState;
+      if (typeof forcedNum === "number") {
+        newGameState = {
+          ...gameStateObject,
+          currentNumber: forcedNum,
+          rankedLastNumber: false,
+        };
+      } else {
+        let randNum = -1;
+        while (
+          randNum === -1 ||
+          gameStateObject.rankedNumbers.includes(randNum)
+        ) {
+          randNum = Math.floor(Math.random() * 1000) + 1;
+        }
+        newGameState = {
+          ...gameStateObject,
+          currentNumber: randNum,
+          rankedLastNumber: false,
+        };
+      }
+      const [startValidIndex, endValidIndex] = getValidIndexes(newGameState);
+      newGameState.startValidIndex = startValidIndex;
+      newGameState.endValidIndex = endValidIndex;
+      updateGameState(newGameState);
+      return;
+    },
+    [gameStateObject, updateGameState]
+  );
 
   return [gameStateObject, updateGameState, generateNewNumber];
 }
