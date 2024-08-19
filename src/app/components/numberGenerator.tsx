@@ -5,7 +5,7 @@ import React from "react";
 interface NumberGeneratorProps {
   gameState: GameState;
   // eslint-disable-next-line no-unused-vars
-  generateNewNumber: (forcedNum?: number) => void;
+  generateNewNumber: (forcedNum?: number) => GameState;
   // eslint-disable-next-line no-unused-vars
   updateGameState: (gameState: GameState) => void;
 }
@@ -20,21 +20,29 @@ export function NumberGenerator({
   React.useEffect(() => {}, []);
 
   function fiftyFiftyLifeline() {
-    if (!gameState.currentNumber || !gameState.lifelines.fiftyfifty) return;
-    const newGameState = { ...gameState };
-    newGameState.lifelines.fiftyfifty = false;
-    updateGameState(newGameState);
+    if (!gameState.currentNumber || !gameState.lifelines) return;
+    const newGameState = generateNewNumber(
+      Math.floor(gameState.currentNumber / 2)
+    );
 
-    generateNewNumber(Math.floor(gameState.currentNumber / 2));
+    newGameState.lifelines = false;
+    updateGameState(newGameState);
   }
 
   function x2Lifeline() {
-    if (!gameState.currentNumber || !gameState.lifelines.x2) return;
-    const newGameState = { ...gameState };
-    newGameState.lifelines.x2 = false;
+    if (!gameState.currentNumber || !gameState.lifelines) return;
+    const newGameState = generateNewNumber(
+      Math.floor(gameState.currentNumber * 2)
+    );
+    newGameState.lifelines = false;
     updateGameState(newGameState);
+  }
 
-    generateNewNumber(Math.floor(gameState.currentNumber * 2));
+  function rerollLifeline() {
+    if (!gameState.currentNumber || !gameState.lifelines) return;
+    const newGameState = generateNewNumber();
+    newGameState.lifelines = false;
+    updateGameState(newGameState);
   }
 
   return (
@@ -48,7 +56,7 @@ export function NumberGenerator({
         {!gameState.currentNumber
           ? "START"
           : isLoss
-          ? gameState.lifelines.x2 || gameState.lifelines.fiftyfifty
+          ? gameState.lifelines || gameState.lifelines
             ? "YOU LOST?"
             : "YOU LOST"
           : !gameState.rankedLastNumber
@@ -56,19 +64,25 @@ export function NumberGenerator({
           : "NEXT"}
       </NewNumberButton>
       <Separator />
-      <p>Lifelines:</p>
+      <p>Lifeline (1 per run):</p>
       <LifeLinesDiv>
         <NewRunButton
           onClick={gameState.rankedLastNumber ? undefined : x2Lifeline}
-          disabled={!gameState.lifelines.x2}
+          disabled={!gameState.lifelines}
         >
           X2
         </NewRunButton>
         <NewRunButton
           onClick={gameState.rankedLastNumber ? undefined : fiftyFiftyLifeline}
-          disabled={!gameState.lifelines.fiftyfifty}
+          disabled={!gameState.lifelines}
         >
           50/50
+        </NewRunButton>
+        <NewRunButton
+          onClick={gameState.rankedLastNumber ? undefined : rerollLifeline}
+          disabled={!gameState.lifelines}
+        >
+          reroll
         </NewRunButton>
       </LifeLinesDiv>
       <Separator />
@@ -105,7 +119,7 @@ const LifeLinesDiv = styled.div`
   flex-wrap: wrap;
 
   button {
-    min-width: 100px;
+    min-width: 80px;
   }
 `;
 

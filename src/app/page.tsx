@@ -1,5 +1,5 @@
 "use client";
-import { defaultGameState, useGameState } from "@/hooks/useGameState";
+import { useGameState } from "@/hooks/useGameState";
 import { NumberGenerator } from "./components/numberGenerator";
 import styled from "@emotion/styled";
 import { NumberRanker } from "./components/numberRanker";

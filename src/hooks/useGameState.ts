@@ -2,7 +2,7 @@
 import React from "react";
 import useLocalStorage from "./useLocalStorage";
 
-const version = 0.01;
+const version = 0.02;
 
 export interface GameState {
   rankedNumbers: number[];
@@ -11,11 +11,7 @@ export interface GameState {
   rankedLastNumber: boolean;
   startValidIndex: number;
   endValidIndex: number;
-  lifelines: {
-    x2: boolean;
-    fiftyfifty: boolean;
-    friend: boolean;
-  };
+  lifelines: boolean;
   version: number;
 }
 
@@ -26,11 +22,7 @@ export const defaultGameState: GameState = {
   rankedLastNumber: false,
   startValidIndex: 0,
   endValidIndex: 0,
-  lifelines: {
-    x2: true,
-    fiftyfifty: true,
-    friend: true,
-  },
+  lifelines: true,
   version,
 };
 
@@ -38,7 +30,7 @@ export function useGameState(): [
   state: GameState,
   // eslint-disable-next-line no-unused-vars
   update: (gameState: GameState) => void,
-  generateNew: () => void
+  generateNew: () => GameState
 ] {
   const [gameStateString, setGameStateString] = useLocalStorage(
     "game_state",
@@ -94,7 +86,7 @@ export function useGameState(): [
       newGameState.startValidIndex = startValidIndex;
       newGameState.endValidIndex = endValidIndex;
       updateGameState(newGameState);
-      return;
+      return newGameState;
     },
     [gameStateObject, updateGameState]
   );
