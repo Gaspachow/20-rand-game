@@ -37,6 +37,6 @@ const GameDiv = styled.div`
   justify-content: center;
   gap: 10px;
   flex-wrap: wrap-reverse;
-  align-items: center;
-  padding-top: 20px;
+  align-items: flex-end;
+  padding-top: 50px;
 `;

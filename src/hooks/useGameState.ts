@@ -2,7 +2,7 @@
 import React from "react";
 import useLocalStorage from "./useLocalStorage";
 
-const version = 0.02;
+const version = 0.03;
 
 export interface GameState {
   rankedNumbers: number[];
@@ -12,6 +12,8 @@ export interface GameState {
   startValidIndex: number;
   endValidIndex: number;
   lifelines: boolean;
+  maxRounds: number;
+  maxNumber: number;
   version: number;
 }
 
@@ -23,6 +25,8 @@ export const defaultGameState: GameState = {
   startValidIndex: 0,
   endValidIndex: 0,
   lifelines: true,
+  maxRounds: 20,
+  maxNumber: 1000,
   version,
 };
 
@@ -60,6 +64,10 @@ export function useGameState(): [
 
   const generateNewNumber = React.useCallback(
     (forcedNum?: number) => {
+      if (gameStateObject.score === gameStateObject.maxRounds) {
+        window.alert("you won!!!");
+        return gameStateObject;
+      }
       // Generate random number between 1 and 1000 included
       let newGameState;
       if (typeof forcedNum === "number") {
@@ -74,7 +82,7 @@ export function useGameState(): [
           randNum === -1 ||
           gameStateObject.rankedNumbers.includes(randNum)
         ) {
-          randNum = Math.floor(Math.random() * 1000) + 1;
+          randNum = Math.floor(Math.random() * gameStateObject.maxNumber) + 1;
         }
         newGameState = {
           ...gameStateObject,

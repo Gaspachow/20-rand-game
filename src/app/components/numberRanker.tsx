@@ -57,7 +57,7 @@ const NumberRankDiv = styled.div`
   flex-direction: column;
   gap: 5px;
   align-items: center;
-  padding: 20px;
+  padding: 0px 20px;
   width: 350px;
 `;
 

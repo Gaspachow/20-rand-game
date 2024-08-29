@@ -16,8 +16,17 @@ export function NumberGenerator({
   updateGameState,
 }: NumberGeneratorProps) {
   const isLoss = gameState.endValidIndex - gameState.startValidIndex < 0;
+  const [gameSettings, setGameSettings] = React.useState({
+    maxRounds: 0,
+    maxNumber: 0,
+  });
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => {
+    setGameSettings({
+      maxRounds: gameState.maxRounds || 20,
+      maxNumber: gameState.maxNumber || 1000,
+    });
+  }, [gameState]);
 
   function fiftyFiftyLifeline() {
     if (!gameState.currentNumber || !gameState.lifelines) return;
@@ -45,6 +54,32 @@ export function NumberGenerator({
     updateGameState(newGameState);
   }
 
+  function updateRules(e: any) {
+    const name: "maxRounds" | "maxNumber" = e.target.name;
+    const value = Number(e.target.value);
+
+    const newSettings = { ...gameSettings };
+    newSettings[name] = value;
+    setGameSettings(newSettings);
+
+    if (gameState.currentNumber) return;
+    const newGameState = { ...gameState };
+    newGameState.maxNumber = newSettings.maxNumber;
+    newGameState.maxRounds = newSettings.maxRounds;
+    newGameState.rankedNumbers = new Array<number>(
+      Number(newSettings.maxRounds)
+    );
+    updateGameState(newGameState);
+  }
+
+  function newRun() {
+    const newGameState = { ...defaultGameState };
+    newGameState.maxRounds = gameSettings.maxRounds;
+    newGameState.maxNumber = gameSettings.maxNumber;
+    newGameState.rankedNumbers = new Array<number>(gameSettings.maxRounds);
+    updateGameState(newGameState);
+  }
+
   return (
     <NumberGenDiv>
       <NumberResult>{gameState.currentNumber ?? "-"}</NumberResult>
@@ -63,6 +98,30 @@ export function NumberGenerator({
           ? "RANK NUMBER"
           : "NEXT"}
       </NewNumberButton>
+      {gameState.currentNumber === undefined && (
+        <LifeLinesDiv>
+          <div>
+            <label>Max Rounds</label>
+            <InputStyled
+              name="maxRounds"
+              onChange={updateRules}
+              type="number"
+              min="1"
+              value={gameSettings.maxRounds}
+            />
+          </div>
+          <div>
+            <label>Max Number</label>
+            <InputStyled
+              name="maxNumber"
+              onChange={updateRules}
+              type="number"
+              min="1"
+              value={gameSettings.maxNumber}
+            />
+          </div>
+        </LifeLinesDiv>
+      )}
       <Separator />
       <p>Lifeline (1 per run):</p>
       <LifeLinesDiv>
@@ -88,12 +147,15 @@ export function NumberGenerator({
       <Separator />
       <Title>20 Random Ranker V0.01</Title>
       <Title style={{ color: "lightgreen" }}>Score: {gameState.score}</Title>
-      <NewRunButton onClick={() => updateGameState(defaultGameState)}>
-        NEW RUN
-      </NewRunButton>
+      <NewRunButton onClick={newRun}>NEW RUN</NewRunButton>
     </NumberGenDiv>
   );
 }
+
+const InputStyled = styled.input`
+  width: 50px;
+  margin: 10px;
+`;
 
 const NumberResult = styled.p`
   font-weight: bold;
