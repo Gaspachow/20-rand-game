@@ -16,6 +16,8 @@ export function NumberGenerator({
   updateGameState,
 }: NumberGeneratorProps) {
   const isLoss = gameState.endValidIndex - gameState.startValidIndex < 0;
+  const isWin =
+    gameState.maxRounds == gameState.score && gameState.maxRounds != 0;
   const [gameSettings, setGameSettings] = React.useState({
     maxRounds: 0,
     maxNumber: 0,
@@ -23,8 +25,8 @@ export function NumberGenerator({
 
   React.useEffect(() => {
     setGameSettings({
-      maxRounds: gameState.maxRounds || 20,
-      maxNumber: gameState.maxNumber || 1000,
+      maxRounds: gameState.maxRounds ?? 0,
+      maxNumber: gameState.maxNumber ?? 0,
     });
   }, [gameState]);
 
@@ -60,7 +62,6 @@ export function NumberGenerator({
 
     const newSettings = { ...gameSettings };
     newSettings[name] = value;
-    setGameSettings(newSettings);
 
     if (gameState.currentNumber) return;
     const newGameState = { ...gameState };
@@ -85,8 +86,10 @@ export function NumberGenerator({
       <NumberResult>{gameState.currentNumber ?? "-"}</NumberResult>
       <NewNumberButton
         onClick={() => generateNewNumber()}
-        className={isLoss ? "isLoss" : undefined}
-        disabled={!gameState.rankedLastNumber && !!gameState.currentNumber}
+        className={isLoss ? "isLoss" : isWin ? "isWin" : undefined}
+        disabled={
+          (!gameState.rankedLastNumber && !!gameState.currentNumber) || isWin
+        }
       >
         {!gameState.currentNumber
           ? "START"
@@ -94,6 +97,8 @@ export function NumberGenerator({
           ? gameState.lifelines || gameState.lifelines
             ? "YOU LOST?"
             : "YOU LOST"
+          : isWin
+          ? "YOU WON!"
           : !gameState.rankedLastNumber
           ? "RANK NUMBER"
           : "NEXT"}
@@ -107,7 +112,7 @@ export function NumberGenerator({
               onChange={updateRules}
               type="number"
               min="1"
-              value={gameSettings.maxRounds}
+              value={gameSettings.maxRounds || ""}
             />
           </div>
           <div>
@@ -117,7 +122,7 @@ export function NumberGenerator({
               onChange={updateRules}
               type="number"
               min="1"
-              value={gameSettings.maxNumber}
+              value={gameSettings.maxNumber || ""}
             />
           </div>
         </LifeLinesDiv>
@@ -153,7 +158,7 @@ export function NumberGenerator({
 }
 
 const InputStyled = styled.input`
-  width: 50px;
+  width: 80px;
   margin: 10px;
 `;
 
@@ -201,6 +206,11 @@ const NewNumberButton = styled.button`
 
   &.isLoss {
     background: darkred;
+  }
+
+  &.isWin {
+    background: green;
+    color: white;
   }
 `;
 
