@@ -2,7 +2,7 @@
 import React from "react";
 import useLocalStorage from "./useLocalStorage";
 
-const version = 0.03;
+const version = 0.04;
 
 export interface GameState {
   rankedNumbers: number[];
